@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Timer Compact</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <div class="title-row no-drag">
+            <textarea id="task-title" placeholder="題名" rows="1"></textarea>
+        </div>
+        <div class="timer-section">
+            <div id="timer-display" class="no-drag">00:00</div>
+            <div id="countup-display" class="hidden no-drag">00:00:00</div>
+            <div id="pause-duration" class="hidden">Paused: 00:00</div>
+            <div class="progress-container" id="progress-wrapper">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="stream-controls no-drag">
+            <button id="favorite-titles-btn" title="お気に入り題名から選ぶ">🏷️📂</button>
+            <button id="save-title-btn" title="題名をお気に入りに保存">🏷️★</button>
+            <input type="text" id="category-input" placeholder="🎮 Twitchカテゴリ" autocomplete="off" list="category-suggestions">
+            <datalist id="category-suggestions"></datalist>
+            <button id="favorite-categories-btn" title="お気に入りから選ぶ">🎮📂</button>
+            <button id="save-category-btn" title="カテゴリをお気に入りに保存">🎮★</button>
+            <button id="font-btn" title="フォント変更"><span class="material-icons">text_format</span></button>
+            <button id="mode-toggle" title="カウントアップ切替"><span class="material-icons">timer</span></button>
+        </div>
+
+        <div class="bottom-section">
+            <div id="preset-list" class="no-drag"></div>
+        </div>
+
+        <dialog id="favorite-categories-dialog" class="no-drag">
+            <div style="text-align:center; margin-bottom: 10px;">お気に入りカテゴリ</div>
+            <div id="favorite-categories-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;"></div>
+            <div style="text-align:right; margin-top:10px;">
+                <button id="close-categories-dialog">閉じる</button>
+            </div>
+        </dialog>
+
+        <dialog id="favorite-titles-dialog" class="no-drag">
+            <div style="text-align:center; margin-bottom: 10px;">お気に入り題名</div>
+            <div id="favorite-titles-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;"></div>
+            <div style="text-align:right; margin-top:10px;">
+                <button id="close-titles-dialog">閉じる</button>
+            </div>
+        </dialog>
+
+        <dialog id="font-dialog" class="no-drag">
+            <div style="text-align:center; margin-bottom: 10px;">フォント・サイズ設定</div>
+            
+            <div style="margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; align-items: flex-start;">
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <label for="font-size-input">題名サイズ:</label>
+                    <input type="number" id="font-size-input" value="24" style="width: 60px; padding: 2px;"> px
+                </div>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <label for="timer-font-size-input">タイマーサイズ:</label>
+                    <input type="number" id="timer-font-size-input" value="55" style="width: 60px; padding: 2px;"> px
+                </div>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <label for="app-zoom-input">全体スケール:</label>
+                    <input type="number" id="app-zoom-input" value="1.0" min="0.5" max="3.0" step="0.1" style="width: 60px; padding: 2px;">
+                </div>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <label for="timer-letter-spacing-input">タイマー字送り:</label>
+                    <input type="number" id="timer-letter-spacing-input" value="-2" style="width: 60px; padding: 2px;"> px
+                </div>
+            </div>
+
+            <div id="font-preview-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #555; background: #222; border-radius: 4px;">
+                <div style="padding: 10px; text-align: center; color: #888;">読込中...</div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button id="font-cancel">ｷｬﾝｾﾙ</button>
+                <button id="font-apply">適用</button>
+            </div>
+        </dialog>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

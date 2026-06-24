@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Credentials & Tokens
+*credentials.json
+*-config.json
+*-token.json
+kick-token.json
+twitch-token.json
+obs-config.json
+
+# Builds
+dist/
+NeonTimer-win32-x64/
+*.log
+token.json
