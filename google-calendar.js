@@ -16,9 +16,21 @@ const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 let authClient = null;
 let authPromise = null; // 同時に複数の認証フローが走らないようにする
 
-async function authorize() {
-    // すでに有効なクライアントがある場合は即返す
-    if (authClient && fs.existsSync(TOKEN_PATH)) return true;
+async function authorize(forceCheck = false) {
+    // すでにクライアントがあり、forceCheckでなければ返す。forceCheck時はトークン検証を行う。
+    if (authClient && fs.existsSync(TOKEN_PATH) && !forceCheck) return true;
+    
+    // すでにクライアントがあるがforceCheckの場合、トークンの有効性を検証
+    if (authClient && fs.existsSync(TOKEN_PATH) && forceCheck) {
+        try {
+            await authClient.getAccessToken();
+            return true;
+        } catch (err) {
+            console.warn('保存されたトークンが無効または期限切れです。再認証を行います。', err.message);
+            authClient = null;
+        }
+    }
+
     // 認証フローが進行中なら、それを待つ
     if (authPromise) return authPromise;
 
@@ -118,10 +130,8 @@ async function getNewToken(redirectUri) {
 
 // 予定を作成し、イベントIDを返す
 async function createEvent(title, durationSeconds, customStartTime) {
-    if (!authClient) {
-        const authSuccess = await authorize();
-        if (!authSuccess) return null;
-    }
+    const authSuccess = await authorize(true);
+    if (!authSuccess) return null;
     
     const calendar = google.calendar({ version: 'v3', auth: authClient });
     

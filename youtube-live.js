@@ -78,15 +78,17 @@ async function updateLiveTitle(title) {
 }
 
 /**
- * 配信枠を終了し、新しい枠を作成して配信キーを紐付け直す
+ * 配信枠を終了し、新しい枠を作成して配信キーを紐付け直す。
+ * 題名・説明文は現在アクティブな配信から自動取得して引き継ぐ。
+ * @param {string} [titleSuffix] - タイトル末尾に付ける文字列（例: "（延長）"）。省略時は元のタイトルをそのまま使用。
  */
-async function rolloverBroadcast(title, description = "") {
+async function rolloverBroadcast(titleSuffix = '') {
     const auth = googleCalendar.getAuthClient();
     if (!auth) throw new Error('authClientが取得できませんでした。');
 
     const yt = google.youtube({ version: 'v3', auth });
 
-    // 1. アクティブな放送を取得
+    // 1. アクティブな放送を取得（題名・説明文を引き継ぐため snippet も取得）
     const activeRes = await yt.liveBroadcasts.list({
         part: ['snippet', 'contentDetails', 'status'],
         broadcastStatus: 'active',
@@ -96,30 +98,35 @@ async function rolloverBroadcast(title, description = "") {
     const activeBroadcast = (activeRes.data.items || [])[0];
     if (!activeBroadcast) {
         console.warn('[YT] No active broadcast found for rollover.');
-        return null;
+        throw new Error('YouTube上にアクティブな配信枠が見つかりません。');
     }
 
-    const broadcastId = activeBroadcast.id;
-    const streamId = activeBroadcast.contentDetails.boundStreamId;
-    const privacyStatus = activeBroadcast.status.privacyStatus;
-    
-    console.log(`[YT] Rollover: Ending broadcast ${broadcastId}...`);
+    const broadcastId    = activeBroadcast.id;
+    const streamId       = activeBroadcast.contentDetails.boundStreamId;
+    const privacyStatus  = activeBroadcast.status.privacyStatus;
 
-    // 2. 現在の放送を「完了」にする
+    // 元の題名・説明文を引き継ぐ
+    const inheritedTitle       = activeBroadcast.snippet.title + (titleSuffix ? `　${titleSuffix}` : '');
+    const inheritedDescription = activeBroadcast.snippet.description || '';
+
+    console.log(`[YT] Rollover: Ending broadcast "${activeBroadcast.snippet.title}" (${broadcastId})...`);
+
+    // 2. 現在の放送を「完了」にしてアーカイブを確定
     await yt.liveBroadcasts.transition({
         id: broadcastId,
         broadcastStatus: 'complete',
         part: ['id']
     });
+    console.log('[YT] Rollover: Old broadcast completed (archived).');
 
-    // 3. 新しい放送枠を作成
-    console.log(`[YT] Rollover: Creating new broadcast: ${title}...`);
+    // 3. 新しい放送枠を作成（題名・説明文を引き継ぐ）
+    console.log(`[YT] Rollover: Creating new broadcast: "${inheritedTitle}"...`);
     const insertRes = await yt.liveBroadcasts.insert({
         part: ['snippet', 'status', 'contentDetails'],
         requestBody: {
             snippet: {
-                title: title,
-                description: description || activeBroadcast.snippet.description,
+                title: inheritedTitle,
+                description: inheritedDescription,
                 scheduledStartTime: new Date(Date.now() + 10000).toISOString()
             },
             status: {
@@ -133,14 +140,16 @@ async function rolloverBroadcast(title, description = "") {
     });
 
     const newBroadcastId = insertRes.data.id;
+    console.log(`[YT] Rollover: New broadcast created (${newBroadcastId}).`);
 
-    // 4. 配信キーを紐付け
-    console.log(`[YT] Rollover: Binding stream ${streamId} to new broadcast ${newBroadcastId}...`);
+    // 4. 配信キー（ストリーム）を新しい枠に紐付け
+    console.log(`[YT] Rollover: Binding stream ${streamId} to new broadcast...`);
     await yt.liveBroadcasts.bind({
         id: newBroadcastId,
         streamId: streamId,
         part: ['id']
     });
+    console.log('[YT] Rollover: Stream key bound successfully.');
 
     return newBroadcastId;
 }

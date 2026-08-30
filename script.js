@@ -52,11 +52,14 @@ taskTitleInput.addEventListener('input', function() {
     this.style.height = this.scrollHeight + 'px';
 });
 
-const { createEvent, updateEventEndTime } = require('./google-calendar');
+const { createEvent, updateEventEndTime, authorize } = require('./google-calendar');
 const twitchApi = require('./twitch');
 const ytLive = require('./youtube-live');
 const kickApi = require('./kick');
 const { exec } = require('child_process');
+
+// アプリ起動時にGoogleログイン状態を事前にチェック＆検証
+authorize(true).catch(console.error);
 
 // 起動時に保存されたフォント・サイズを適用
 let selectedFontName = localStorage.getItem('neonTimerFont') || '';
@@ -93,7 +96,7 @@ function saveCategory(name) {
     if (!name) return;
     const cats = getSavedCategories();
     if (!cats.includes(name)) cats.unshift(name);
-    if (cats.length > 20) cats.pop();
+    if (cats.length > 50) cats.pop();
     localStorage.setItem('twitchFavoriteCategories', JSON.stringify(cats));
 }
 function renderCategorySuggestions() {
@@ -168,7 +171,7 @@ function saveTitle(title) {
     if (!title) return;
     const titles = getSavedTitles();
     if (!titles.includes(title)) titles.unshift(title);
-    if (titles.length > 20) titles.pop();
+    if (titles.length > 50) titles.pop();
     localStorage.setItem('neonTimerFavoriteTitles', JSON.stringify(titles));
 }
 function updateSaveTitleBtnState() {
