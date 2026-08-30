@@ -65,8 +65,9 @@
 
 ### 方式A：ビルド済み実行ファイルから起動（推奨）
 
-1. `NeonTimer-win32-x64` フォルダ内の **`NeonTimer.exe`** をダブルクリックして起動します。
-2. 初回起動時にタスクバーや画面端にネオンタイマーが表示されます。
+1. [GitHub Releases (v1.0.0)](https://github.com/orangeqoon/NeonTimerApp/releases/tag/v1.0.0) から **`NeonTimer-win32-x64.zip`** をダウンロードして解凍します。
+2. 解凍したフォルダ内の **`NeonTimer.exe`** をダブルクリックして起動します。
+3. 初回起動時にタスクバーや画面端にネオンタイマーが表示されます。
 
 ### 方式B：ソースコードから開発・起動
 
