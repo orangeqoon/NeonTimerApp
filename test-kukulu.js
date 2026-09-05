@@ -4,14 +4,24 @@ console.log('--- Testing KukuluLIVE API Integration ---');
 console.log('isConfigured():', kukuluApi.isConfigured());
 
 if (!kukuluApi.isConfigured()) {
-    console.log('kukulu-config.json is not configured yet (expected if user has not placed their API key).');
-    console.log('Module syntax and methods loaded successfully.');
+    console.log('【未設定】kukulu-config.json が見つからないか、APIキーが未入力です。');
+    console.log('kukulu-config.json を NeonTimerApp フォルダに配置してください。');
     process.exit(0);
 }
 
-// If configured, test fetching port info
-kukuluApi.getPortInfo().then(info => {
-    console.log('Kukulu Port Info:', info);
-}).catch(err => {
-    console.error('Kukulu Test Error:', err.message);
-});
+// If configured, test port info and update
+async function test() {
+    try {
+        console.log('1. 現在の配信枠情報を取得中 (port_info)...');
+        const info = await kukuluApi.getPortInfo();
+        console.log('枠情報:', info);
+
+        console.log('2. タイトル更新をテスト中...');
+        const res = await kukuluApi.updateStream('Test Title from NeonTimerApp');
+        console.log('更新成功:', res);
+    } catch (e) {
+        console.error('テスト失敗:', e.message);
+    }
+}
+
+test();
