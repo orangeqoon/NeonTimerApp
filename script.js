@@ -56,6 +56,7 @@ const { createEvent, updateEventEndTime, authorize } = require('./google-calenda
 const twitchApi = require('./twitch');
 const ytLive = require('./youtube-live');
 const kickApi = require('./kick');
+const kukuluApi = require('./kukulu');
 const { exec } = require('child_process');
 
 // アプリ起動時にGoogleログイン状態を事前にチェック＆検証
@@ -681,6 +682,9 @@ async function startStreamingApis(title, category) {
     }
     if (kickApi.isConfigured && kickApi.isConfigured() && title) {
         kickApi.updateStream(title, category || '').catch(console.error);
+    }
+    if (kukuluApi.isConfigured() && title) {
+        kukuluApi.updateStream(title).catch(console.error);
     }
 }
 

@@ -4,7 +4,7 @@
 
 **NeonTimer Compact** は、ライブ配信者（ストリーマー）向けに開発された、超軽量・コンパクトな**デスクトップタイマー＆配信情報一括同期ツール**です。
 
-ネオン調のサイバーパンクなデザインで画面端に常時表示でき、タイマーの進行に合わせて **YouTube Live / Twitch / Kick の配信タイトルやカテゴリを一括自動更新**し、配信記録を **Google カレンダーへ自動同期**します。
+ネオン調のサイバーパンクなデザインで画面端に常時表示でき、タイマーの進行に合わせて **YouTube Live / Twitch / Kick / KukuluLIVE の配信タイトルやカテゴリを一括自動更新**し、配信記録を **Google カレンダーへ自動同期**します。
 
 ---
 
@@ -16,7 +16,7 @@
    - 透過背景＆ネオン発光デザイン。邪魔にならないコンパクトサイズで常に最前面に表示されます。
    - ウィンドウを掴んで自由にドラッグ移動可能。終了時の位置・サイズ・フォント設定を自動記憶します。
 2. **配信プラットフォームへの一括タイトル・カテゴリ即時反映**
-   - 題名やお気に入りカテゴリを選択した瞬間に、**YouTube Live・Twitch・Kick** の配信枠情報が即座に自動更新されます。
+   - 題名やお気に入りカテゴリを選択した瞬間に、**YouTube Live・Twitch・Kick・KukuluLIVE** の配信枠情報が即座に自動更新されます。
 3. **Google カレンダー自動同期 & 連続イベント結合**
    - タイマー開始〜終了（またはカウントアップ）の作業・配信時間を Google カレンダーに自動で記録。
    - 10分以内の短いインターバルで同じ題名のタイマーを連続実行した場合、1つのカレンダー予定として自動的に結合・マージされます。
@@ -117,6 +117,15 @@ node get-twitch-token.js
   "client_id": "あなたのKick_CLIENT_ID",
   "client_secret": "あなたのKick_CLIENT_SECRET",
   "redirect_uri": "http://localhost:3000/oauth2callback"
+}
+```
+
+### 4. KukuluLIVE 連携 (`kukulu-config.json`)
+[KukuluLIVE APIキー取得ページ](https://live.erinn.biz/login.php?action=getAPIKey) から APIキー を生成し、以下のフォーマットで **`kukulu-config.json`** を作成します：
+
+```json
+{
+  "apikey": "あなたのKukulu_API_KEY"
 }
 ```
 
